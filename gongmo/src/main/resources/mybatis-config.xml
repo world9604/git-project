@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<properties>
+		<property name="driver" value="com.jdbc.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@210.16.214.202:1521:xe" />
+		<property name="username" value="gongmofive"  />
+		<property name="password" value="gongmofive" />
+	</properties>
+	
+	<typeAliases>
+		<typeAlias type="com.mvcdemoweb.model.dto.Agency" alias="Agency" />
+		<typeAlias type="com.mvcdemoweb.model.dto.BuyStore" alias="BuyStore" />
+		<typeAlias type="com.mvcdemoweb.model.dto.BuyStoreQna" alias="BuyStoreQna" />
+		<typeAlias type="com.mvcdemoweb.model.dto.Member" alias="Member"/>
+		<typeAlias type="com.mvcdemoweb.model.dto.CategoryBig" alias="CategoryBig"/>
+		<typeAlias type="com.mvcdemoweb.model.dto.CategoryMiddle" alias="CategoryMiddle"/>
+		<typeAlias type="com.mvcdemoweb.model.dto.Contract" alias="Contract"/>
+		<typeAlias type="com.mvcdemoweb.model.dto.InterestStore" alias="InterestStore"/>
+		<typeAlias type="com.mvcdemoweb.model.dto.Notice" alias="Notice"/>
+		<typeAlias type="com.mvcdemoweb.model.dto.SalesManage" alias="SalesManage"/>
+		<typeAlias type="com.mvcdemoweb.model.dto.Store" alias="Store"/>
+		<typeAlias type="com.mvcdemoweb.model.dto.StoreQna" alias="StoreQna"/>
+		<typeAlias type="com.mvcdemoweb.model.dto.StoreImage" alias="StoreImage"/>
+		<typeAlias type="com.mvcdemoweb.model.dto.Question" alias="Question"/>
+		<typeAlias type="com.mvcdemoweb.model.dto.BusStation" alias="BusStation"/>
+	</typeAliases>
+	
+	<environments default="development">
+		<environment id="development">			
+			
+			<transactionManager type="JDBC" />			
+			
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" />				
+				<!--  
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />				
+				-->
+				<property name="username" value="gongmofive" />
+				<property name="password" value="gongmofive" />
+			</dataSource>
+			
+		</environment>
+	</environments>
+
+	<mappers>
+		<!-- 
+			Code에서 분리된 SQL문이 작성되고 객체와의 매핑 정보가 정의되는 파일들
+			경로는 패키지 경로를 사용 : com.demoweb -> com/demoweb 경로 
+		-->		 
+		<mapper resource="com/mvcdemoweb/model/mapper/MemberMapper.xml" />
+		<mapper resource="com/mvcdemoweb/model/mapper/StoreMapper.xml" />
+		<mapper resource="com/mvcdemoweb/model/mapper/NoticeMapper.xml" />
+
+	</mappers>
+	
+	
+
+</configuration>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 논리적 클래스 만들기 -->  
+<mapper namespace="com.mvcdemoweb.model.mapper.StoreMapper">
+
+	<resultMap type="Store" id="StoreListAndImageMap">
+		<id property="storeNo" column="storeNo" />
+		<result property="storeName" column="storeName" />
+		<result property="storeAddress" column="storeAddress" />
+		<result property="storeFloor" column="storeFloor" />
+		<result property="type" column="type" />
+		<result property="admittedNum" column="admittedNum" />
+		<result property="pyeong" column="pyeong" />
+		<result property="leaseOrDealing" column="leaseOrDealing" />
+		<result property="dealingPrice" column="dealingPrice" />
+		<result property="leaseDeposit" column="leaseDeposit" />		
+		<result property="leasePremium" column="leasePremium" />		
+		<result property="leaseMonthlyRent" column="leaseMonthlyRent" />		
+		<result property="salesMonthly" column="salesMonthly" />		
+		<result property="salesCost" column="salesCost" />		
+		<result property="salesMonthlyProfit" column="salesMonthlyProfit" />		
+		<result property="salesEarningsRate" column="salesEarningsRate" />		
+		<result property="salesExplanation" column="salesExplanation" />		
+		<result property="storeFeature" column="storeFeature" />		
+		<result property="aroundSubway" column="aroundSubway" />		
+		<result property="availableParkingNum" column="availableParkingNum" />						
+		<result property="etcTraffic" column="etcTraffic" />		
+		<result property="enterDay" column="enterDay" />		
+		<result property="interiorAndSellReason" column="interiorAndSellReason" />
+
+		
+		<collection property="storeImage" column="storeNo" select="getStoreImageList" javaType="List" ofType="StoreImage"/>
+	
+</resultMap>
+
+	
+ 
+
+
+<resultMap type="CategoryBig" id="CategoryBigMap">
+	<result property="bigNo" column="bigNo"/>
+	<result property="bigName" column="bigName"/>
+	<collection select="getCategoryMiddleByBigNo" property="middle" column="bigNo" javaType="List" ofType="CategoryMiddle"/>
+
+</resultMap>
+
+	<insert id="insertStore" parameterType="Store">
+		INSERT INTO store (storeNo, storeName, storeAddress, storeFloor, type, admittedNum, pyeong,  
+				leaseOrDealing, dealingPrice, leaseDeposit, leasePremium, leaseMonthlyRent, salesMonthly, 
+				salesCost, salesExplanation, storeFeature, aroundSubway, availableParkingNum, etcTraffic, 
+				enterDay, interiorAndSellReason, sellType, memberNo, middleNo, canCallTime  )  
+		VALUES (storeno_sequence.nextval, #{storeName}, #{storeAddress}, #{storeFloor}, 
+				#{type}, #{admittedNum}, #{pyeong}, #{leaseOrDealing}, #{dealingPrice}, #{leaseDeposit}, #{leasePremium}, 
+				#{leaseMonthlyRent}, #{salesMonthly}, #{salesCost},#{salesExplanation}, #{storeFeature}, 
+				#{aroundSubway}, #{availableParkingNum}, #{etcTraffic}, #{enterDay}, #{interiorAndSellReason}, 
+				#{sellType}, #{memberNo}, #{middleNo}, #{canCallTime} )
+	</insert> 
+
+	<select id="getStoreList" resultType="Store">
+		SELECT storeNo, storeName, storeAddress, storeFloor, type, admittedNum, pyeong,  leaseOrDealing, dealingPrice, leaseDeposit, leasePremium, leaseMonthlyRent, salesMonthly, salesCost, salesMonthlyProfit, salesEarningsRate, salesExplanation, storeFeature, aroundSubway, availableParkingNum, etcTraffic, enterDay, interiorAndSellReason, sellType, memberNo, middleNo, sellStatue, regDate, buyerNo, canCallTime  
+		FROM Store 
+	</select>
+	
+	<select id="getStoreImageList" resultType="StoreImage">
+		SELECT 	storeImageNo, savedFileName, uploadFileName, storeNo, savedPath
+		FROM StoreImage 
+		WHERE storeNo = #{storeNo}
+	</select>
+				
+	<select id="selectAllStoreListAndImage" resultMap="StoreListAndImageMap">
+		SELECT storeNo, storeName, storeAddress, storeFloor, type, admittedNum, pyeong,  leaseOrDealing, dealingPrice, leaseDeposit, leasePremium, leaseMonthlyRent, salesMonthly, salesCost, salesMonthlyProfit, salesEarningsRate, salesExplanation, storeFeature, aroundSubway, availableParkingNum, etcTraffic, enterDay, interiorAndSellReason, sellType, memberNo, middleNo, sellStatue, regDate, buyerNo, canCallTime
+        FROM store 
+    </select> 
+    
+    <select id="selectFiveStoreListAndImage" resultMap="StoreListAndImageMap">
+		SELECT storeNo, storeName, storeAddress, storeFloor, type, admittedNum, pyeong,  leaseOrDealing, dealingPrice, leaseDeposit, leasePremium, leaseMonthlyRent, salesMonthly, salesCost, salesMonthlyProfit, salesEarningsRate, salesExplanation, storeFeature, aroundSubway, availableParkingNum, etcTraffic, enterDay, interiorAndSellReason, sellType, memberNo, middleNo, sellStatue, regDate, buyerNo, canCallTime
+        FROM store
+        WHERE storeNo <![CDATA[<]]>= 5 
+    </select> 
+	
+	<select id="getCategoryBigList" resultType="CategoryBig">
+		SELECT bigno, bigname
+		FROM categorybig
+	</select>
+
+	<select id="getCategoryMiddleList" resultType="CategoryMiddle">
+		SELECT middleno, middlename, bigno
+		FROM categorymiddle
+	</select>
+	
+	<select id="getCategoryMiddleNameByMiddleNo" resultType="string"
+			parameterType="int">
+		SELECT middlename
+		FROM categorymiddle
+		WHERE middleno = #{middleNo}
+	</select>
+	
+	
+	<insert id="insertBuyStore" parameterType="BuyStore">
+		INSERT INTO buystore 
+			(buyStoreNo, title, content, memberNo, middleNo, writer, statue, sido, gugun)
+						
+		VALUES 
+			(buystoreno_sequence.nextval, #{title}, #{content}, #{memberNo}, #{middleNo}, #{writer},'0', #{sido}, #{gugun} )
+	</insert> 
+	
+	<select id="getBuyStoreList" resultType="BuyStore" parameterType="hashmap">
+		<!-- SELECT buyStoreNo, title, content, regDate, memberNo, middleNo, writer
+		FROM buystore 
+		ORDER BY buyStoreNo DESC -->
+		
+		SELECT * FROM
+		(SELECT rownum as idx, s.* FROM
+		  (SELECT buyStoreNo, title, content, regDate, memberNo, middleNo, writer, statue, sido, gugun
+		  	FROM buystore  
+		  	WHERE statue = '0' 
+		    ORDER BY buyStoreNo DESC
+		  )s
+		)
+		WHERE idx &gt;= #{start} AND idx &lt; #{last}
+	</select>
+	
+	<select id="getDetailByBuyStoreNo" resultType="BuyStore"
+			parameterType="int">
+		SELECT buyStoreNo, title, content, regDate, memberNo, middleNo, writer, statue, sido, gugun
+		FROM buystore
+		WHERE buyStoreNo = #{buyStoreNo}		
+	</select>	
+	
+	<select id="getStoreNoForInsertImage" resultType="int">
+		SELECT storeNo
+		FROM store
+		where rownum = 1
+		order by storeno DESC
+	</select>
+	
+	<insert id="insertImage" parameterType="StoreImage">
+		INSERT INTO storeimage 
+			(storeImageNo, savedFileName, uploadFileName, storeNo, savedPath)
+						
+		VALUES 
+			(storeimageno_sequence.nextval, #{savedFileName}, #{uploadFileName}, #{storeNo}, #{savedPath})
+	</insert> 
+	
+	<insert id="registerBuyQna" parameterType="BuyStoreQna">
+		INSERT INTO buystoreqna 
+			(buyStoreQnaNo, content, emoticon, buyStoreNo, memberNo, 
+			 qnaGroup, qnaStep, writer)			
+		
+		VALUES 
+			(buyStoreQnaNo_sequence.nextval, #{content}, #{emoticon}, #{buyStoreNo}, #{memberNo},
+			 buyStoreQnaNo_sequence.currval, 1, #{writer})
+	</insert> 
+	
+	<select id="getBuyStoreQnas" resultType="BuyStoreQna"
+			parameterType="int">
+		SELECT buystoreqnano, content, emoticon, regdate, buystoreno, memberno, writer, qnaDepth
+		FROM buystoreqna
+		WHERE buyStoreNo = #{buyStoreNo}
+		ORDER BY qnagroup ASC, qnastep ASC
+	</select>
+	
+	<delete id="deleteBuyQna" parameterType="int">
+		DELETE FROM buystoreqna 
+		WHERE buystoreqnano = #{buyStoreQnaNo}
+	</delete>
+	
+	<update id="updateStep" parameterType="hashmap">
+		UPDATE buyStoreQna
+		SET qnastep = qnastep + 1
+		WHERE qnagroup = #{qnaGroup} AND qnastep > #{qnaStep}
+	</update>
+	
+	<select id="getBuyQnaByBuyQnaNo" resultType="BuyStoreQna"
+			parameterType="int">
+		SELECT buystoreqnano, content, emoticon, regdate, buystoreno, memberno,
+			   qnaGroup, qnaStep, qnaDepth, writer
+		FROM buystoreqna
+		WHERE buystoreqnano = #{buyStoreQnaNo}
+	</select>	
+	
+	<insert id="registerBuyQnaReply" parameterType="BuyStoreQna">
+		INSERT INTO buystoreqna 
+			(buyStoreQnaNo, content, emoticon, buyStoreNo, memberNo, 
+			 qnaGroup, qnaStep, qnaDepth, writer)			
+		
+		VALUES 
+			(buyStoreQnaNo_sequence.nextval, #{content}, #{emoticon}, #{buyStoreNo}, #{memberNo},
+			 #{qnaGroup}, #{qnaStep}, #{qnaDepth}, #{writer})
+	</insert> 
+		
+	<select id="getCategoryBigAndCategoryMiddleList" resultMap="CategoryBigMap">
+		SELECT bigno, bigname FROM categorybig
+	</select>
+	
+	<select id="getCategoryMiddleByBigNo" resultType="CategoryMiddle" parameterType="int">
+		SELECT middleNo, middleName, bigNo FROM categoryMiddle 
+		WHERE bigNo = #{bigNo}
+	</select>
+	
+	<select id="getSidoByLocation" resultType="String">
+		SELECT DISTINCT(sido) FROM location
+	</select>
+	
+	<select id="getGuGunBySido" resultType="String" parameterType="String">
+		SELECT DISTINCT(gugun) FROM location
+		WHERE sido = #{sido}
+	</select>
+	 	<select id="searchlistByleaseOrDealing" parameterType="String" resultMap="StoreListAndImageMap">
+		SELECT STORE.STORENO, STORE.STORENAME, STORE.TYPE, STORE.LEASEORDEALING, STORE.DEALINGPRICE, STORE.STOREADDRESS, STORE.LEASEDEPOSIT, STORE.MEMBERNO
+		FROM STORE
+		WHERE STORE.leaseOrDealing = #{leaseOrDealing} 
+	</select>
+	 	<select id="searchlistByleaseOrDealingAndName" parameterType="hashMap" resultMap="StoreListAndImageMap">
+		SELECT STORE.STORENO, STORE.STORENAME, STORE.TYPE, STORE.LEASEORDEALING, STORE.DEALINGPRICE, STORE.STOREADDRESS, STORE.LEASEDEPOSIT, STORE.MEMBERNO
+		FROM STORE
+		WHERE STORE.leaseOrDealing = #{leaseOrDealing} AND STORE.MIDDLENO = (SELECT CATEGORYMIDDLE.MIDDLENO
+                                                          					 FROM CATEGORYMIDDLE
+                                                          					 WHERE CATEGORYMIDDLE.MIDDLENAME LIKE '%'||#{name}||'%')
+	</select>
+		<select id="searchlistByleaseOrDealingAndstoreAddress" parameterType="hashMap" resultMap="StoreListAndImageMap">
+		SELECT STORE.STORENO, STORE.STORENAME, STORE.TYPE, STORE.LEASEORDEALING, STORE.DEALINGPRICE, STORE.STOREADDRESS, STORE.LEASEDEPOSIT, STORE.MEMBERNO
+		FROM STORE
+		WHERE STORE.leaseOrDealing = #{leaseOrDealing} AND STORE.STOREADDRESS LIKE '%'||#{storeAddress}||'%'
+	</select>
+ 	<select id="searchlist" parameterType="hashMap" resultMap="StoreListAndImageMap">
+		SELECT STORE.STORENO, STORE.STORENAME, STORE.TYPE, STORE.LEASEORDEALING, STORE.DEALINGPRICE, STORE.STOREADDRESS, STORE.LEASEDEPOSIT, STORE.MEMBERNO
+		FROM STORE
+		WHERE STORE.leaseOrDealing = #{leaseOrDealing} AND STORE.STOREADDRESS LIKE '%'||#{storeAddress}||'%' AND STORE.MIDDLENO = (SELECT CATEGORYMIDDLE.MIDDLENO
+                                                           																		 FROM CATEGORYMIDDLE
+                                                           																		 WHERE CATEGORYMIDDLE.MIDDLENAME LIKE '%'||#{name}||'%')
+	</select>
+	
+	<!-- <select id="getStoreList" parameterType="hashMap" resultMap="StoreListAndImageMap">
+		SELECT STORE.STORENO, STORE.STORENAME, STORE.TYPE, STORE.LEASEORDEALING, STORE.DEALINGPRICE, STORE.STOREADDRESS, STORE.LEASEDEPOSIT, STORE.MEMBERNO
+		FROM STORE
+		WHERE STORE.leaseOrDealing = #{leaseOrDealing} AND STORE.STOREADDRESS LIKE '%'||#{storeAddress}||'%' AND STORE.MIDDLENO = (SELECT CATEGORYMIDDLE.MIDDLENO
+                                                           																		 FROM CATEGORYMIDDLE
+                                                           																		 WHERE CATEGORYMIDDLE.MIDDLENAME LIKE '%'||#{name}||'%')
+	</select> -->
+	
+	<select id="getBuyStoreCount" resultType="int">
+		SELECT count(*)
+		FROM buystore
+		WHERE statue = '0'
+	</select>
+
+		<insert id="insertQuestion" parameterType="Question"
+			useGeneratedKeys="true" 
+			keyProperty="questionNo" keyColumn="questionNo">
+			INSERT INTO question 
+			(questionNo, memberNo, storeNo, questionTitle, questionContents, storeMemberNo)
+			VALUES 
+			(QUESTIONNO_SEQUENCE.nextval, #{memberNo}, #{storeNo}, #{questionTitle}, #{questionContents},#{storeMemberNo})
+		</insert>
+			<update id="buystoreDeleted"
+			parameterType="int">
+			UPDATE BUYSTORE
+			SET statue = '1'
+			WHERE buystoreNo = #{buystoreNo}
+		</update>
+</mapper>
+  
+

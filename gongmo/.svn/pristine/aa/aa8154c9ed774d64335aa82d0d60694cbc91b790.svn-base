@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 논리적 클래스 만들기 -->  
+<mapper namespace="com.mvcdemoweb.model.mapper.NoticeMapper">
+
+	<insert id="insertNotice" parameterType="Notice">
+		INSERT INTO notice 
+			(noticeNo, memberNo, title, content, writer,sellStatue,savedFileName,uploadFileName)
+		VALUES 
+			(noticeno_sequence.nextval, #{memberNo}, #{title}, #{content}, #{writer},'0',#{savedFileName},#{uploadFileName} )
+	</insert> 
+	
+	<select id="getNoticeList" resultType="Notice" parameterType="hashmap">
+		<!-- SELECT noticeNo, memberNo, title, content, writer, regdate, sellStatue
+		FROM notice  -->
+		
+		SELECT * FROM
+		(SELECT rownum as idx, s.* FROM
+		  (SELECT noticeNo, memberNo, title, content, writer, regdate, sellStatue,savedFileName,uploadFileName
+		  	FROM notice  
+		  	WHERE sellStatue = '0' 
+		    ORDER BY noticeNo DESC
+		  )s
+		)
+		WHERE idx &gt;= #{start} AND idx &lt; #{last}
+	</select>
+	
+	<select id="getDetailByNoticeNo" resultType="Notice"
+			parameterType="int">
+		SELECT noticeNo, memberNo, title, content, writer, regdate, sellStatue,savedFileName,uploadFileName
+		FROM notice
+		WHERE noticeNo = #{noticeNo}		
+	</select>	
+	
+	<update id="noticeDeleted"
+		parameterType="int">
+		UPDATE NOTICE 
+		SET sellStatue = '1'
+		WHERE noticeNo = #{noticeNo}
+	</update>
+
+	<select id="getNoticeCount" resultType="int">
+		SELECT count(*)
+		FROM notice
+		WHERE sellStatue = '0'
+	</select>
+		
+</mapper>
+  
+

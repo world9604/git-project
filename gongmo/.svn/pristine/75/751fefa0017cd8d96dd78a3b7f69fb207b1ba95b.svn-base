@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+						http://www.springframework.org/schema/mvc http://www.springframework.org/schema/context/spring-mvc.xsd"> 
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		
+	<context:component-scan base-package="com.mvcdemoweb.model.dao" />
+	<context:component-scan base-package="com.mvcdemoweb.controller" />
+	<context:component-scan base-package="com.mvcdemoweb.model.service" />
+	<context:component-scan base-package="com.mvcdemoweb.model.handler" />
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="driverClassName" 
+			value="oracle.jdbc.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@210.16.214.202:1521:xe" />
+		<property name="username" value="gongmofive" />
+		<property name="password" value="gongmofive" />			
+	</bean>
+	
+	
+	
+	<bean id="sqlSessionFactory" 
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+	</bean>
+	
+	<bean id="sqlSessionTemplate" 
+		class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactory" />	
+	</bean>	
+	
+	
+	<!-- 이 빈은 MemberMapper 인터페이스와 
+		 MemberMapper.xml을 연계하는 역할 수행 -->
+	<bean id="memberMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.mvcdemoweb.model.mapper.MemberMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />	
+	</bean>
+	<bean id="storeMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.mvcdemoweb.model.mapper.StoreMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />	
+	</bean>
+	<bean id="noticeMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.mvcdemoweb.model.mapper.NoticeMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />	
+	</bean>
+		
+	
+	<!-- 원래는 platformTransactionManager을 사용하는 jdbc를 사용하면 DataSourceTransactionManager를 사용할수 있다  -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="txTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="transactionManager" ref="txManager" />
+	</bean>
+		
+	<!-- 다운로드 -->
+
+	<bean class="org.springframework.http.converter.StringHttpMessageConverter" >
+   	<property name="supportedMediaTypes">
+               <list>
+                   <value>text/html;charset=UTF-8</value>
+               </list>
+       </property>
+ 	</bean>
+	
+	
+</beans>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 논리적 클래스 만들기 -->  
+<mapper namespace="com.mvcdemoweb.model.mapper.MemberMapper">
+
+	<insert id="insertMember" parameterType="Member"
+		useGeneratedKeys="true" 
+		keyProperty="memberNo" keyColumn="memberNo">
+		INSERT INTO member 
+		(memberNo, name, email, password, birth, phone)
+		VALUES 
+		(MEMBERNO_SEQUENCE.nextval, #{name}, #{email}, #{password}, #{birth}, #{phone})
+	</insert>
+	<select id="selectEmailByLikeEmail" parameterType="string" resultType="String">
+		SELECT email
+		FROM member WHERE email = #{email} 
+	</select>
+	<select id="getMemberByEmailAndPasswd"
+		parameterType="hashMap" resultType="Member">
+		SELECT memberNo, name, email, password, birth, phone, agencyType, adminType
+		FROM member
+		WHERE email = #{email} AND password = #{password}
+	</select>
+
+	<select id="validByEamil" parameterType="string" resultType="String">
+		SELECT email
+		FROM member WHERE email = #{email} 
+	</select>
+	<update id="memberEdit"
+		parameterType="Member">
+		UPDATE member 
+		SET password = #{password}, birth = #{birth}, phone = #{phone}
+		WHERE email = #{email}
+	</update>
+		<select id="getMemberByEmailAndPasswd2"
+		parameterType="hashMap" resultType="Member">
+		SELECT memberNo, name, email, password, birth, phone, agencyType, adminType
+		FROM member
+		WHERE email = #{email} AND password = #{password}
+	</select>
+		<select id="searchStoresByMemberNo" parameterType="int" resultType="Store">
+		SELECT *
+		FROM store WHERE memberNo = #{memberNo} 
+	</select>
+	<select id="searchStoreByStoreNo" parameterType="int" resultType="Store">
+		SELECT *
+		FROM store WHERE storeNo = #{storeNo} 
+	</select>
+	<select id="searchStoreImagesByStoreNo" parameterType="int" resultType="StoreImage">
+		SELECT *
+		FROM storeImage WHERE storeNo = #{storeNo} 
+	</select>
+		<select id="searchStoreImagesByMemberNo" resultType="StoreImage">
+		SELECT *
+		FROM storeImage
+	</select>
+	<select id="allstore" resultType="Store">
+		SELECT *
+		FROM store
+	</select>
+	<select id="searchMemberByMemberNo" parameterType="int" resultType="Member">
+		SELECT *
+		FROM member WHERE memberNo = #{memberNo} 
+	</select>
+	<update id="upDataSellStatue"
+		parameterType="int">
+		UPDATE room 
+		SET sellStatue = '1'
+		WHERE storeNo = #{storeNo}
+	</update>
+		<insert id="interestStore" parameterType="hashMap"
+		useGeneratedKeys="true" 
+		keyProperty="interestStoreNo" keyColumn="interestStoreNo">
+		INSERT INTO intereststore 
+		(interestStoreNo, memberNo, storeNo)
+		VALUES 
+		(INTERESTSTORENO_SEQUENCE.nextval, #{memberNo}, #{storeNo})
+	</insert>
+		<select id="searchinterestStorekLike" parameterType="hashMap" resultType="InterestStore">
+		SELECT *
+		FROM interestStore WHERE memberNo = #{memberNo} AND storeNo = #{storeNo}
+	</select>
+	<select id="searchinterestStorekLikelonmemberNo" parameterType="hashMap" resultType="InterestStore">
+		SELECT *
+		FROM interestStore WHERE memberNo = #{lonmemberNo} AND storeNo = #{storeNo}
+	</select>
+	<select id="selectInterestStoreBymemberNo" parameterType="int" resultType="Store">
+		SELECT STORE.STORENO, STORE.STORENAME, STORE.TYPE, STORE.LEASEORDEALING, STORE.DEALINGPRICE, STORE.STOREADDRESS, STORE.LEASEDEPOSIT, STORE.MEMBERNO,STORE.sellStatue
+		FROM STORE
+		INNER JOIN interestStore
+		ON STORE.STORENO = interestStore.STORENO
+		WHERE interestStore.memberNo = #{memberNo}
+	</select>
+	
+	<select id="getBuyListByMemberNo" parameterType="hashmap" resultType="BuyStore">
+		<!-- SELECT 
+			buyStoreNo, title, content, regDate, memberNo, middleNo, writer
+		FROM buystore
+		WHERE memberNo = #{memberNo} -->
+		
+		SELECT * FROM
+		(SELECT rownum as idx, s.* FROM
+		  (SELECT buyStoreNo, title, content, regDate, memberNo, middleNo, writer, statue, sido, gugun
+		  	FROM buystore  
+		  	WHERE memberNo = #{memberNo}
+		    ORDER BY buyStoreNo DESC
+		  )s
+		)
+		WHERE idx &gt;= #{start} AND idx &lt; #{last}
+	</select>
+
+                
+	<select id="getMiddleorsmallByMiddleNo" parameterType="String" resultType="String">
+		SELECT 
+			middleorsmall
+		FROM categorymiddle
+		WHERE middleNo = #{middleNo}
+	</select>
+	
+	<select id="getMiddlecodeByMiddleNo" parameterType="String" resultType="String">
+		SELECT 
+			middlecode
+		FROM categorymiddle
+		WHERE middleNo = #{middleNo}
+	</select>
+
+
+	<select id="questionList" parameterType="hashmap" resultType="Question">
+		<!-- SELECT QUESTION.memberNo, QUESTION.storeNo, QUESTION.questionTitle, QUESTION.questionContents,QUESTION.state,QUESTION.questionNo
+		FROM QUESTION
+		INNER JOIN STORE
+		ON QUESTION.STORENO = STORE.STORENO
+		WHERE STORE.memberNo = #{memberNo} -->
+		
+		SELECT * FROM
+		(SELECT rownum as idx, s.* FROM
+		  (SELECT memberNo, storeNo, questionTitle, questionContents, state, questionNo, storeMemberNo
+		  	FROM QUESTION  
+		  	WHERE storeMemberNo = #{memberNo}
+		    ORDER BY questionNo DESC
+		  )s
+		)
+		WHERE idx &gt;= #{start} AND idx &lt; #{last}
+	</select>
+	
+	<select id="allMember" resultType="Member">
+		SELECT *
+		FROM MEMBER
+	</select>	
+
+	<select id="getMiddleNoByStoreNo" parameterType="String" resultType="String">
+		SELECT 
+			middleNo
+		FROM Store
+		WHERE storeNo = #{storeNo}
+	</select>
+
+	
+	<select id="getBusStationBybusStationName" parameterType="String" resultType="BusStation">
+		SELECT 
+			USE_MON, BUS_ROUTE_NO, BUS_ROUTE_NM, BUS_STA_NM, RIDE_PASGR_NUM, ALIGHT_PASGR_NUM, WORK_DT
+		FROM BUSSTATION
+		WHERE BUS_STA_NM = #{busStationName}
+	</select>
+
+
+	<select id="allInterestStore" resultType="InterestStore">
+		SELECT *
+		FROM InterestStore
+	</select>
+	<delete id="intereststoreDeleted" parameterType="int">
+		DELETE
+		FROM InterestStore
+		WHERE intereststoreNo = #{intereststoreNo}
+	</delete>
+	
+		<delete id="questionDeleted" parameterType="int">
+		DELETE
+		FROM QUESTION
+		WHERE questionNo = #{questionNo}
+		</delete>
+		<update id="storesellStatue"
+		parameterType="int">
+		UPDATE store 
+		SET sellStatue = '1'
+		WHERE storeNo = #{storeNo}
+		</update>
+		
+		<select id="getMybuylistCount" parameterType="int" resultType="int">
+			SELECT count(*)
+			FROM buystore
+			WHERE memberNo = #{ memberNo }
+		</select>
+		
+
+		<select id="getQuestionCount" parameterType="int" resultType="int">
+			SELECT count(*)
+			FROM question
+			WHERE storeMemberNo = #{ memberNo }
+		</select>
+		
+
+</mapper>
+  
+
